@@ -5,23 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>專業題庫測驗系統</title>
 
-  <!-- KaTeX 數學公式 -->
+  <!-- 1. KaTeX 數學公式支援 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 
-  <!-- marked.js Markdown 渲染 -->
+  <!-- 2. marked.js (Markdown 表格、排版、圖片支援) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
+  <!-- 3. 自訂全站樣式 -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- 頂部導航列 -->
+  <!-- 頂部功能列 -->
   <nav class="navbar">
     <div class="nav-brand">📚 題庫測驗系統</div>
     <div class="nav-actions">
-      <!-- 跳轉至編輯器 -->
+      <!-- 導向編輯器按鈕 -->
       <a href="編輯器.html" target="_blank" class="btn btn-outline btn-sm">🛠️ 出題與繪圖編輯器</a>
     </div>
   </nav>
@@ -32,30 +33,48 @@
     <section id="setup-view" class="card">
       <header class="section-header">
         <h2>🎯 測驗條件設定</h2>
-        <p class="subtitle">自訂練習範圍、設定計時與題數，模擬真實考場環境。</p>
+        <p class="subtitle">依序選擇年級、科目與版本，系統將自動抽出符合的單元題庫。</p>
       </header>
 
-      <!-- 1. 科目選擇 -->
-      <div class="form-group">
-        <label class="group-title">1. 選擇科目 (可複選)</label>
-        <div id="subject-filters" class="pill-group"></div>
+      <!-- 1. 四層連動：年級、科目、版本 -->
+      <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 20px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="group-title" for="grade-select">1. 年級</label>
+          <select id="grade-select" class="form-select">
+            <option value="">-- 請選擇年級 --</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="group-title" for="subject-select">2. 科目</label>
+          <select id="subject-select" class="form-select" disabled>
+            <option value="">-- 請先選年級 --</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="group-title" for="edition-select">3. 版本</label>
+          <select id="edition-select" class="form-select" disabled>
+            <option value="">-- 請先選科目 --</option>
+          </select>
+        </div>
       </div>
 
-      <!-- 2. 單元選擇 (即時搜尋) -->
+      <!-- 2. 單元選擇 (多選 + 即時搜尋) -->
       <div class="form-group">
         <div class="flex-between">
-          <label class="group-title">2. 選擇單元 (可複選)</label>
-          <input type="text" id="unit-search" placeholder="🔍 搜尋單元關鍵字...">
+          <label class="group-title">4. 選擇單元 (可複選)</label>
+          <input type="text" id="unit-search" placeholder="🔍 搜尋單元關鍵字..." disabled>
         </div>
         <div id="unit-list" class="checkbox-list">
-          <div class="empty-tip">請先勾選上方科目</div>
+          <div class="empty-tip">請依序選擇年級、科目與版本</div>
         </div>
       </div>
 
-      <!-- 3. 題型 & 4. 難度 -->
+      <!-- 3. 題型 & 4. 難度篩選 (選填) -->
       <div class="form-row">
         <div class="form-group">
-          <label class="group-title">3. 題型篩選</label>
+          <label class="group-title" for="type-filter">5. 題型篩選 (選填)</label>
           <select id="type-filter" class="form-select">
             <option value="ALL">全部題型</option>
             <option value="SINGLE_CHOICE">單選題</option>
@@ -64,8 +83,9 @@
             <option value="FILL">填充題</option>
           </select>
         </div>
+
         <div class="form-group">
-          <label class="group-title">4. 難度篩選</label>
+          <label class="group-title" for="diff-filter">6. 難度篩選 (選填)</label>
           <select id="diff-filter" class="form-select">
             <option value="ALL">全部難度</option>
             <option value="簡單">簡單</option>
@@ -75,23 +95,26 @@
         </div>
       </div>
 
-      <!-- 5. 題數 & 6. 計時設定 (新功能) -->
+      <!-- 5. 題數 & 6. 計時設定 -->
       <div class="form-row">
         <div class="form-group">
-          <label class="group-title">5. 測驗題數</label>
+          <label class="group-title" for="count-filter">7. 測驗題數</label>
           <select id="count-filter" class="form-select">
-            <option value="0">全部題目（不限）</option>
-            <option value="5">隨機 5 題</option>
-            <option value="10" selected>隨機 10 題</option>
-            <option value="20">隨機 20 題</option>
-            <option value="30">隨機 30 題</option>
+            <option value="0">全部題目（不限題數）</option>
+            <option value="5">隨機抽 5 題</option>
+            <option value="10" selected>隨機抽 10 題</option>
+            <option value="20">隨機抽 20 題</option>
+            <option value="30">隨機抽 30 題</option>
+            <option value="50">隨機抽 50 題</option>
           </select>
         </div>
+
         <div class="form-group">
-          <label class="group-title">6. 計時模式</label>
+          <label class="group-title" for="timer-setting">8. 計時模式</label>
           <select id="timer-setting" class="form-select">
-            <option value="0">正數計時（不限時間）</option>
+            <option value="0">正數計時（不限時）</option>
             <option value="10">倒數 10 分鐘</option>
+            <option value="15">倒數 15 分鐘</option>
             <option value="20">倒數 20 分鐘</option>
             <option value="30">倒數 30 分鐘</option>
             <option value="60">倒數 60 分鐘</option>
@@ -99,41 +122,43 @@
         </div>
       </div>
 
-      <button id="start-btn" class="btn btn-primary btn-block" disabled>開始測驗</button>
+      <button id="start-btn" class="btn btn-primary btn-block" style="margin-top:10px;" disabled>
+        載入題庫並開始測驗
+      </button>
     </section>
 
-    <!-- ================= 畫面 2: 測驗介面 ================= -->
+    <!-- ================= 畫面 2: 測驗作答面板 ================= -->
     <section id="quiz-view" class="card hidden">
-      <!-- 考試頂部資訊工具列 -->
+      <!-- 考試頂部狀態與快捷工具列 -->
       <header class="quiz-toolbar">
         <div class="left-tools">
-          <span id="badge-type" class="badge">單選</span>
+          <span id="badge-type" class="badge">單選題</span>
           <span id="badge-diff" class="badge">中等</span>
-          <button id="flag-btn" class="tool-btn" title="標記本題稍後複查">🚩 待檢查</button>
-          <button id="scratchpad-btn" class="tool-btn" title="打開草稿紙">📝 計算紙</button>
-          <button id="palette-toggle-btn" class="tool-btn" title="開啟題號清單">🔢 題號表</button>
+          <button id="flag-btn" class="tool-btn" title="標記本題為待檢查">🚩 待檢查</button>
+          <button id="scratchpad-btn" class="tool-btn" title="開啟計算紙手寫板">📝 計算紙</button>
+          <button id="palette-toggle-btn" class="tool-btn" title="展開/收合題號表">🔢 題號表</button>
         </div>
         <div class="right-tools">
           <div id="quiz-timer" class="timer-badge">⏱️ 00:00</div>
         </div>
       </header>
 
-      <!-- 題號快選抽屜面板 (可收合) -->
+      <!-- 題號快選抽屜面板 (點擊展開) -->
       <div id="question-palette" class="palette-grid hidden"></div>
 
-      <!-- 題組專用長文 -->
+      <!-- 題組專用長篇閱讀短文 -->
       <article id="group-desc-box" class="group-desc-box hidden"></article>
 
-      <!-- 題目內文 -->
+      <!-- 題目內文主體 (支援 Markdown 表格、圖片、KaTeX 公式) -->
       <div id="question-text" class="markdown-body"></div>
 
-      <!-- 刪去法操作提示 -->
+      <!-- 刪去法操作指引小字 -->
       <div class="help-hint">💡 提示：點擊選項右側的「✕」可使用刪去法劃掉選項。</div>
 
-      <!-- 作答區 -->
+      <!-- 作答區 (動態切換：單選、多選、是非⭕❌、填空欄) -->
       <div id="interaction-area" class="interaction-area"></div>
 
-      <!-- 底部導覽列 -->
+      <!-- 底部控制列 -->
       <footer class="quiz-footer">
         <button id="prev-btn" class="btn btn-secondary">上一題</button>
         <span id="quiz-progress-text" class="progress-indicator">第 1 / 10 題</span>
@@ -142,12 +167,13 @@
       </footer>
     </section>
 
-    <!-- ================= 畫面 3: 批改與成績報告 ================= -->
+    <!-- ================= 畫面 3: 批改與成績總結 ================= -->
     <section id="result-view" class="card hidden">
       <header class="section-header text-center">
         <h2>📊 測驗結算報告</h2>
       </header>
 
+      <!-- 成績概覽大卡片 -->
       <div class="score-summary-card">
         <div class="score-circle">
           <span id="final-score" class="score-number">0</span>
@@ -157,27 +183,29 @@
           <div>總題數：<strong id="stat-total">0</strong></div>
           <div>答對題數：<strong id="stat-correct" class="text-success">0</strong></div>
           <div>答錯題數：<strong id="stat-wrong" class="text-danger">0</strong></div>
-          <div>總費時：<strong id="stat-time">00:00</strong></div>
+          <div>作答費時：<strong id="stat-time">00:00</strong></div>
         </div>
       </div>
 
       <div class="review-header">
-        <h3>📝 錯題與詳解逐題檢視</h3>
+        <h3>📝 錯題檢視與完整詳解</h3>
       </div>
       
-      <!-- 完整批改詳解列表 -->
+      <!-- 逐題解析列表 -->
       <div id="review-list" class="review-list"></div>
 
-      <button id="restart-btn" class="btn btn-primary btn-block" style="margin-top:24px;">返回首頁重新測驗</button>
+      <button id="restart-btn" class="btn btn-primary btn-block" style="margin-top:24px;">
+        返回首頁重新測驗
+      </button>
     </section>
 
   </main>
 
-  <!-- ================= 浮動計算紙 (Scratchpad Modal) ================= -->
+  <!-- ================= 浮動手寫計算紙 (Scratchpad Modal) ================= -->
   <div id="scratchpad-modal" class="modal-backdrop hidden">
     <div class="scratchpad-container">
       <div class="scratchpad-header">
-        <span>📝 隨身計算紙（支援手寫與繪圖）</span>
+        <span>📝 隨身計算紙（支援手寫與觸控繪圖）</span>
         <div class="scratchpad-tools">
           <button id="pen-btn" class="btn btn-sm btn-outline active">✏️ 畫筆</button>
           <button id="eraser-btn" class="btn btn-sm btn-outline">🧹 橡皮擦</button>
@@ -189,6 +217,7 @@
     </div>
   </div>
 
+  <!-- 引用解析核心與主互動邏輯 -->
   <script src="js/parser.js"></script>
   <script src="js/app.js"></script>
 </body>
