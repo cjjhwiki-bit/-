@@ -1,10 +1,10 @@
-{
+[
   {
     "grade": "九年級",
     "subject": "理化",
     "edition": "翰林",
     "id": "9-pc-h-1",
     "name": "第一單元:直線運動",
-    "file": "questions/九年級/理化/翰林/第一單元:直線運動.txt"
+    "file": "questions/九年級/理化/翰林/第一單元-直線運動.txt"
   }
-}
+]
